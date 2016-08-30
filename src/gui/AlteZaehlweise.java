@@ -49,6 +49,7 @@ public class AlteZaehlweise extends JFrame {
 	 * Create the frame.
 	 */
 	public AlteZaehlweise() {
+		setTitle("Alte Zählweise");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(600, 300, 315, 200);
 		contentPane = new JPanel();
@@ -61,8 +62,9 @@ public class AlteZaehlweise extends JFrame {
 		tfStueckzahl.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					//TODO add Keylistener
-					System.out.println(130%60);
+					umrechnen();
+					tfStueckzahl.requestFocus();
+					tfStueckzahl.selectAll();
 				}
 			}
 		});
