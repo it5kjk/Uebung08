@@ -1,3 +1,4 @@
+// FIX: requestFocus of tfInputMark doesnt work after reset
 
 package gui;
 
@@ -18,13 +19,12 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
-import org.omg.CORBA.PRIVATE_MEMBER;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
-public class Notenbilanz extends JFrame {
+public class Notenbilanz2 extends JFrame {
 
 	private JPanel contentPane;
 	private DecimalFormat f = new DecimalFormat("#0.00");
@@ -65,7 +65,7 @@ public class Notenbilanz extends JFrame {
 					e.printStackTrace();
 				}
 				try {
-					Notenbilanz frame = new Notenbilanz();
+					Notenbilanz2 frame = new Notenbilanz2();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -77,10 +77,10 @@ public class Notenbilanz extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Notenbilanz() {
-		setTitle("Notenbilanz");
+	public Notenbilanz2() {
+		setTitle("Notenbilanz2");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(650, 350, 395, 270);
+		setBounds(650, 350, 395, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -93,6 +93,7 @@ public class Notenbilanz extends JFrame {
 			public void keyReleased(KeyEvent e) { //watch for key strokes
 	            if(tfMarkAmount.getText().length() == 0) {
 	                btnSaveMarkAmount.setEnabled(false);
+	                lblAmountEnteredMarks.setText("");
 	            } else {
 	            	tfMarkAmount.setBackground(Color.white);
 	                btnSaveMarkAmount.setEnabled(true);
@@ -151,7 +152,7 @@ public class Notenbilanz extends JFrame {
 		
 		lblAmountEnteredMarks = new JLabel("Anzahl eingegebene Noten: ");
 		lblAmountEnteredMarks.setVisible(false);
-		lblAmountEnteredMarks.setBounds(10, 130, 250, 14);
+		lblAmountEnteredMarks.setBounds(10, 130, 150, 14);
 		contentPane.add(lblAmountEnteredMarks);
 		
 		lblMarkAverage = new JLabel("Notenschnitt: ");
@@ -245,8 +246,7 @@ public class Notenbilanz extends JFrame {
 		tfMarkAmount.requestFocus();
 	}
 	private void saveMarkAmount() {
-		lblAmountEnteredMarks.setText("");
-		lblAmountEnteredMarks.setForeground(Color.black);
+		
 		try {
 			Integer.parseInt(tfMarkAmount.getText());
 			markAmount = Integer.parseInt(tfMarkAmount.getText());
@@ -262,17 +262,15 @@ public class Notenbilanz extends JFrame {
 			System.out.println("editierbar? "+tfInputMark.isEditable());
 			btnSaveMark.setVisible(true);
 		} catch (NumberFormatException e) {
-			lblAmountEnteredMarks.setForeground(Color.red);
 			lblAmountEnteredMarks.setText("Bitte geben Sie eine gültige Nummer ein!");
 			lblAmountEnteredMarks.setVisible(true);
-			tfMarkAmount.requestFocus();
-			tfMarkAmount.selectAll();
 		}
 	}
 	
 	private void saveMark(){
-		tfInputMark.setBackground(Color.white);
 		String[] allowedInputSet = {"1","2","3","4","5","6"};
+		
+		
 		System.out.println(Arrays.asList(allowedInputSet).contains(tfInputMark.getText())); 
 		if (!tfInputMark.getText().isEmpty() && 
     			Arrays.asList(allowedInputSet).contains(tfInputMark.getText())
@@ -299,7 +297,6 @@ public class Notenbilanz extends JFrame {
 					btnSaveMark.setEnabled(false);
 					btnNew.setVisible(true);
 					printStatistic();
-					btnNew.requestFocus();
 				}
 			}
     	} else {
@@ -310,8 +307,6 @@ public class Notenbilanz extends JFrame {
 	}
 	
 	private void printStatistic() {
-		//compute values for statistic from the treemap
-		
 		Entry<String, Integer> bestMark = null;
 		for (Entry<String, Integer> entry : marks.entrySet()) {
 		    if (bestMark == null || bestMark.getValue() > entry.getValue()) {
@@ -332,19 +327,17 @@ public class Notenbilanz extends JFrame {
 				summe = summe + entry.getValue();
 			}
 		}
-		
-		Double average =  ((double) summe / (double) markAmount);
-		double average_rounded = average + 0.005;
-		
-		//write labels
-		lblAmountEnteredMarks.setText(amountEnteredMarksLabelTxt.concat(Integer.toString(markAmount)));
+		Double average = (double) (summe / markAmount);
+		lblAmountEnteredMarks.setText(lblAmountEnteredMarks.getText().concat(Integer.toString(markAmount)));
 		lblBestMark.setText(lblBestMark.getText().concat(bestMark.getValue().toString()));
-		lblMarkAverage.setText(lblMarkAverage.getText().concat(f.format(average_rounded)));
+		lblMarkAverage.setText(lblMarkAverage.getText().concat(Double.toString(average)));
 		lblWorstMark.setText(lblWorstMark.getText().concat(worstMark.getValue().toString()));
 		
 		lblAmountEnteredMarks.setVisible(true);
 		lblMarkAverage.setVisible(true);
 		lblBestMark.setVisible(true);
 		lblWorstMark.setVisible(true);
+		
+		btnNew.requestFocus();
 	}
 }
